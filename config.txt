@@ -1,0 +1,37 @@
+#### references and Parameters
+
+### tools 
+SAMTOOLS="/g/data3/gx8/extras/vlad/miniconda/bin" 
+BEDTOOLS="/g/data3/gx8/extras/vlad/miniconda/bin"
+BWA="/g/data3/gx8/extras/vlad/miniconda/bin"
+PICARD="/home/563/vs2870/gx8/extras/vlad/HGT-ID_v1.0/bin/picard"
+PRIMER3="/home/563/vs2870/gx8/extras/vlad/HGT-ID_v1.0/bin/primer3/src/primer3_core"
+FANCYBOX="/home/563/vs2870/gx8/extras/vlad/HGT-ID_v1.0/bin/fancybox"
+RLIB="/home/563/vs2870/gx8/extras/vlad/HGT-ID_v1.0/Rlibs"
+#### executable
+PERL="/g/data3/gx8/extras/10x/miniconda/bin"
+JAVA="/g/data3/gx8/extras/10x/miniconda/bin"
+R="/g/data3/gx8/extras/vlad/miniconda/bin"
+
+
+### references
+USER_HUMAN_database="/home/563/vs2870/gx8/extras/vlad/HGT-ID_v1.0/resources/reference.fa"
+HUMAN_database="/home/563/vs2870/gx8/extras/vlad/HGT-ID_v1.0/resources/human.fa"
+HUMAN_database_Index="/home/563/vs2870/gx8/extras/vlad/HGT-ID_v1.0/resources/human"
+VIRUS_database="/home/563/vs2870/gx8/extras/vlad/HGT-ID_v1.0/resources/virus.fa"
+VIRUS_database_Index="/home/563/vs2870/gx8/extras/vlad/HGT-ID_v1.0/resources/virus"
+VIRUS_HUMAN_database="/home/563/vs2870/gx8/extras/vlad/HGT-ID_v1.0/resources/human_virus.fa"
+VIRUS_HUMAN_database_Index="/home/563/vs2870/gx8/extras/vlad/HGT-ID_v1.0/resources/human_virus"
+REF_FLAT="/home/563/vs2870/gx8/extras/vlad/HGT-ID_v1.0/resources/refFlat.txt.gz"
+HUMAN_CYTOBAND="/home/563/vs2870/gx8/extras/vlad/HGT-ID_v1.0/resources/cytoBand.txt.gz"
+
+### 
+THREADS="4"
+##lowering this number will give more HGT events 
+SEQUENCE_COMPLEXITY="0.7"
+DEPTH="5"
+
+### Integration Site parameters
+MINRP="1"
+MINSOFT="5"
+
