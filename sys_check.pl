@@ -5,11 +5,6 @@ print "\nChecking Java version...\n\n";
 my $ret = `java -version 2>&1`;
 print "$ret\n";
 
-if (index($ret, '1.7') == -1) {
-    printf "HGT-ID require Java 1.7 or more to run properly\n\n";
-	die "";
-}
-
 
 #print "\nChecking SAMtools...\n\n";
 

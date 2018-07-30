@@ -58,21 +58,9 @@ echo -e "=========================================="
 echo -e "HGT-ID PIPELINE (v1.0) installation script"
 echo -e "=========================================="
 
-SAMTOOLS="$BIN_DIR/samtools"
-echo -e "Checking samtools directory...\n"
-[ -d "$SAMTOOLS" ] || { echo -e "Error: directory '$SAMTOOLS' does not exist!" ; exit 1 ; }
-echo -e "ok"
-
-BEDTOOLS="$BIN_DIR/bedtools"
-echo -e "Checking bedtools directory...\n"
-[ -d "$BEDTOOLS" ] || { echo -e "Error: directory '$BEDTOOLS' does not exist!" ; exit 1 ; }
-echo -e "ok"
-
-
-BWA="$BIN_DIR/bwa"
-echo -e "Checking bwa directory...\n"
-[ -d "$BWA" ] || { echo -e "Error: directory '$BWA' does not exist!" ; exit 1 ; }
-echo -e "ok"
+SAMTOOLS=samtools
+BEDTOOLS=bedtools
+BWA=bwa
 
 PICARD="$BIN_DIR/picard"
 echo -e "Checking picard directory...\n"
@@ -124,11 +112,6 @@ echo -e "ok"
 perl=${perl%*/*}
 #### java
 java=`which java`
-jj=`java -version 2>&1 | head -n 1 | awk -F '"' '{print $2}' | awk -F'.' 'BEGIN {OFS="."} {print $1,$2} '`
-if [[ $(echo "$jj == 1.7" | bc) -ne 0 ]]; then echo -e "correct version of JAVA is installed";
-else echo -e "1.7 version of JAVA is required to run the pipeline ....";exit 1; fi
-if [[ ! $jj ]];then echo -e "No JAVA found, please install java before using the tool";exit 1;
-else ver=` java -version 2>&1 | head -n 1| awk '{print $3}'`;echo -e "java version: $ver                                      already installed, nothing to do ...\n";fi
 echo -e "ok"
 java=${java%*/*}
 
@@ -160,25 +143,6 @@ fi
 # Compile each package
 #
 
-echo -e "\nInstalling samtools...\n"
-cd "$BIN_DIR/samtools"
-`make --quiet > $BIN_DIR/samtools/log.txt 2>&1`
-cd "$INSTALL_DIR"
-echo -e "ok"
-
-echo -e "Installing bedtools...\n"
-cd "$BIN_DIR/bedtools"
-bed=`make --quiet > $BIN_DIR/bedtools/log.txt 2>&1`
-cd "$INSTALL_DIR"
-echo -e "ok"
-#rm log.txt
-
-echo -e "Installing bwa...\n"
-cd "$BIN_DIR/bwa"
-`make --quiet > $BIN_DIR/bwa/log.txt 2>&1`
-cd "$INSTALL_DIR"
-echo -e "ok"
-
 echo -e "Installing primer3...\n"
 cd "$BIN_DIR/primer3/src"
 `make --quiet > $BIN_DIR/primer3/log.txt 2>&1`
@@ -202,10 +166,10 @@ cd ..
 
 #### resources
 echo -e "downloading and creating the indexes for the reference genome ....\n"
-cp $ref_genome $RESOURCES/reference.fa
+ln -s $ref_genome $RESOURCES/reference.fa
 ref=$RESOURCES/reference.fa
 echo -e "creating samtools index file ...\n"
-$SAMTOOLS/samtools faidx $RESOURCES/reference.fa
+ln -s ${ref_genome}.fai $RESOURCES/reference.fa.fai
 echo -e "ok"
 
 cd $RESOURCES
@@ -215,7 +179,7 @@ $wget -q ftp://ftp.ncbi.nlm.nih.gov/sra/reports/Assembly/GRCh37-HG19_Broad_varia
 cat Homo_sapiens_assembly19.fasta | awk '{if($0 ~ /^>/){print ">chr"$1} else {print}}' | sed -e 's/chr>/chr/g' | sed -e 's/chrMT/chrM/g' > human.fa
 echo -e "indexing the human reference genome ....\n"
 rm Homo_sapiens_assembly19.fasta
-$SAMTOOLS/samtools faidx $RESOURCES/human.fa
+samtools faidx $RESOURCES/human.fa
 echo -e "ok"
 # viral reference genome
 echo -e "downloading the viral reference genome .....\n"
@@ -223,20 +187,20 @@ $wget -q ftp://ftp.ncbi.nlm.nih.gov/refseq/release/viral/viral.1.1.genomic.fna.g
 zcat viral.1.1.genomic.fna.gz | awk -F'[|,]' '{if($0 ~/^>/){print ">"$5"_"$2} else {print}}' | tr " " "_" | sed -e 's/>_/>/g' > virus.fa
 echo -e "indexing the viral reference genome ....\n"
 rm viral.1.1.genomic.fna.gz
-$SAMTOOLS/samtools faidx $RESOURCES/virus.fa
+samtools faidx $RESOURCES/virus.fa
 echo -e "ok"
 ### 
 cat human.fa virus.fa > human_virus.fa
 echo -e "indexing the human and viral reference genome ....\n"
-$SAMTOOLS/samtools faidx $RESOURCES/human_virus.fa
+samtools faidx $RESOURCES/human_virus.fa
 echo -e "ok"
 ### BWA indexing the reference genome
 echo -e "BWA indexing the reference genome ....\n"
-#$BWA/bwa index -a bwtsw -p $RESOURCES/human_virus $RESOURCES/human_virus.fa & 
+bwa index -a bwtsw -p $RESOURCES/human_virus $RESOURCES/human_virus.fa & 
 #pid=$!
-$BWA/bwa index -a is -p $RESOURCES/virus $RESOURCES/virus.fa  & 
+bwa index -a is -p $RESOURCES/virus $RESOURCES/virus.fa  & 
 pid1=$!
-$BWA/bwa index -a bwtsw -p $RESOURCES/human $RESOURCES/human.fa & 
+bwa index -a bwtsw -p $RESOURCES/human $RESOURCES/human.fa & 
 pid2=$!
 #wait $pid $pid1 $pid2
 wait $pid1 $pid2

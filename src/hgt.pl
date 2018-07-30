@@ -63,8 +63,8 @@ mkdir $scoring;
 
 #`bwa`;
 ### reading the configuration file
-copy($CONFIG,"$OUTPUT/config.txt");
-$CONFIG="$OUTPUT/config.txt";
+copy($CONFIG,"config.txt");
+$CONFIG="config.txt";
 my $config_vars=read_files_var($CONFIG);
 my $SAMTOOLS=$config_vars->{'SAMTOOLS'};
 my $BEDTOOLS=$config_vars->{'BEDTOOLS'};
