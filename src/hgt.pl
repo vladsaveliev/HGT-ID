@@ -138,7 +138,7 @@ print FH "samtools view -u -b -f 12 $BAMFILE > $scoring/UnMapped.bam \&\n";
 print FH "pid4=\$!\n";
 
 
-print FH "samtools view -F 8 -f 2 -F 4 -f 64 $BAMFILE  | awk '\$6 ~ /S/' | awk '\$6 !~ /I/ ' | awk '\$6 !~ /D/' | awk '\$6 ~ /S/' | perl -ane '\$len=length(\$F[9]);\$len=\$len/2;\@CIGAR = split(/([0-9]+[SMIDNHXP])/, \$F[5]);my \$hash;map { push(\@{\$hash->{\$2}}, \$1) if (/(\\d+)([SMIDNHXP])/) } \@CIGAR; foreach my \$softclip (\@{\$hash->{S}}) {if(\$softclip >= \$len){ print }}' > $human_mapping/read1 \&\n";
+print FH "samtools view -F 8 -f 2 -F 4 -f 64  $BAMFILE  | awk '\$6 ~ /S/' | awk '\$6 !~ /I/ ' | awk '\$6 !~ /D/' | awk '\$6 ~ /S/' | perl -ane '\$len=length(\$F[9]);\$len=\$len/2;\@CIGAR = split(/([0-9]+[SMIDNHXP])/, \$F[5]);my \$hash;map { push(\@{\$hash->{\$2}}, \$1) if (/(\\d+)([SMIDNHXP])/) } \@CIGAR; foreach my \$softclip (\@{\$hash->{S}}) {if(\$softclip >= \$len){ print }}' > $human_mapping/read1 \&\n";
 print FH "pid2=\$!\n";
 print FH "samtools view -F 8 -f 2 -F 4 -f 128 $BAMFILE  | awk '\$6 ~ /S/' | awk '\$6 !~ /I/ ' | awk '\$6 !~ /D/' | awk '\$6 ~ /S/' | perl -ane '\$len=length(\$F[9]);\$len=\$len/2;\@CIGAR = split(/([0-9]+[SMIDNHXP])/, \$F[5]);my \$hash;map { push(\@{\$hash->{\$2}}, \$1) if (/(\\d+)([SMIDNHXP])/) } \@CIGAR; foreach my \$softclip (\@{\$hash->{S}}) {if(\$softclip >= \$len){ print }}'> $human_mapping/read2 \&\n";
 print FH "pid3=\$!\n";
@@ -175,10 +175,17 @@ submit($command);
 #### get the FASTQ from BAM file for unmapped reads
 $command=join ("","java -XX:ParallelGCThreads=",$THREADS," -Xmx6g -Xms3g -jar ",$PICARD,"/SamToFastq.jar INPUT=",$scoring,"/UnMapped.bam FASTQ=",$scoring,"/read1.fq SECOND_END_FASTQ=",$scoring,"/read2.fq VALIDATION_STRINGENCY=SILENT > ",$logs,"/1a.bam2fastq.log 2>&1");
 submit($command);
-
 #########################
 #### completed step1
 ############################################################
+
+
+
+
+
+
+
+
 #### map it again to human reference genome
 print "Step2:\n";
 print "mapping the reads back to human again...\n";
@@ -217,6 +224,10 @@ if (! $debug){rmtree("$human_mapping");}
 #########################
 #### completed step2
 ############################################################
+
+
+
+
 print "Step3:\n";
 print  "mapping the reads to viral genome...\n";
 open FH, ">$autocode/run.bwa-mem.sh" or die "can't open the scipt to write\n";
@@ -254,6 +265,10 @@ submit($command);
 #########################
 #### completed step3
 ############################################################
+
+
+
+
 print "Step4:\n";
 print "finding the initial candidate list of HGT...\n";
 #### create report for virus and human mapping for each HGT candidate 
@@ -273,7 +288,11 @@ submit($command);
 #if ( ! $debug){unlink ("$OUTPUT/VIRUS.HUMAN.sort.reads");}
 ### get regions which are well covered
 $command=join ("","samtools idxstats ",$OUTPUT,"/VIRUS.HUMAN.flt.sort.bam | awk -v depth=$DEPTH '\$NF+\$(NF-1)>depth' | cut -f1 > ",$OUTPUT,"/chromosomes2keep.txt");
-submit($command); 
+submit($command);
+
+
+
+
 #########################
 #### completed step4
 ############################################################
