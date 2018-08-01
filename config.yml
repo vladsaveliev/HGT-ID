@@ -1,0 +1,21 @@
+scripts_dir:     /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/src
+user_human_fa:   /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/reference.fa
+human_fa:        /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/human.fa
+human_bwa:       /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/human
+virus_fa:        /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/virus.fa
+virus_bwa:       /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/virus
+virus_human_fa:  /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/human_virus.fa
+virus_human_bwa: /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/human_virus
+ref_flat:        /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/refFlat.txt.gz
+human_cytoband:  /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/cytoBand.txt.gz
+
+threads: 4
+sequence_complexity: 0.7  # lowering this number will give more HGT events
+depth: 5
+
+# Integration site parameters
+min_pr: 1
+min_soft: 5
+
+bam: /data/cephfs/punim0010/data/Results/Patients/DiploidNeverResponder/final/diploid_tumor/diploid_tumor-ready.bam
+output_dir: 'output'
