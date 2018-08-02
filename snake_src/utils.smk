@@ -17,7 +17,7 @@ def get_bwa_run(input, output, threads, params):
 rule sample_name:
     """ Read the sample name from the RG tag """
     input:   bam = config['bam'],
-             script = join(config['scripts_dir'], 'sample_name_from_bam.sh')
+             script = join(config['snake_src_dir'], 'sample_name_from_bam.sh')
     output:  join(work_dir, 'sample_name')
     shell:  'bash {input.script} {input.bam} > {output}'
 
@@ -31,7 +31,7 @@ rule lib_size:
         Calculate the average insert absolute size.
     """
     input:   bam = config['bam'],
-             script = join(config['scripts_dir'], 'lib_size_from_bam.sh')
+             script = join(config['snake_src_dir'], 'lib_size_from_bam.sh')
     output:  join(work_dir, 'libsize.txt')
     shell:  'bash {input.script} {input.bam} > {output}'
 

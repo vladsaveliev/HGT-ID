@@ -289,13 +289,14 @@ submit($command);
 ### get regions which are well covered
 $command=join ("","samtools idxstats ",$OUTPUT,"/VIRUS.HUMAN.flt.sort.bam | awk -v depth=$DEPTH '\$NF+\$(NF-1)>depth' | cut -f1 > ",$OUTPUT,"/chromosomes2keep.txt");
 submit($command);
-
-
-
-
 #########################
 #### completed step4
 ############################################################
+
+
+
+
+
 print "Step5:\n";
 my $region2Capture=$readlength+$libsize;
 print "creating regions to go back to original BAM file to extract reads for to find soft clipping...\n";
@@ -365,11 +366,15 @@ submit($command);
 $command=join ("","mv ",$OUTPUT,"/",$SAMPLE,".forcalling.cyto.bam ", $OUTPUT,"/",$SAMPLE,".forcalling.bam");
 submit($command); 
 $command=join ("","samtools index ",$OUTPUT,"/",$SAMPLE,".forcalling.bam");
-submit($command); 
-
+submit($command);
 #########################
 #### completed step5
 ############################################################
+
+
+
+
+
 ### find the integration points
 print "Step6:\n";
 print  "find the integration point...\n"; 
