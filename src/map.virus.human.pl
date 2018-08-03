@@ -87,7 +87,7 @@ while(defined $read1 && defined $read2) {
 	else	{
 		if (defined($calls{$R1[0]}{1}))	{
 #			delete $calls{$R1[0]}{1};
-			print OUT "$calls{$R1[0]}{1}\t$value1";
+			print OUT "$calls{$R1[0]}{1}\t$value1\n";
 			#delete $calls{$R1[0]}{1};
 			#### make a sam format
 			($readid,$hchr,$hpos,$hcigar,$hseq,$hqual,$hwhichread,$hreverse)=split(/\t/,$calls{$R1[0]}{1});
@@ -132,7 +132,7 @@ while(defined $read1 && defined $read2) {
 	else	{
                 if (defined($calls{$R2[0]}{2}))       {
 #			delete $calls{$R1[0]}{2};
-                        print OUT "$calls{$R2[0]}{2}\t$value2";
+                        print OUT "$calls{$R2[0]}{2}\t$value2\n";
 			    ($readid,$hchr,$hpos,$hcigar,$hseq,$hqual,$hwhichread,$hreverse)=split(/\t/,$calls{$R1[0]}{2});
                         ($vwhichread,$vreverse,$vchr,$vpos,$vcigar,$vseq,$vqual)=split(/\t/,$value2);
 			if ($hwhichread == 1)   {
