@@ -1,4 +1,5 @@
 sortname_shell = 'samtools sort -n -@ {threads} {input} -Obam > {output}'
+sortpos_shell  = 'samtools sort -@ {threads} {input} -Obam > {output} && samtools index {output}'
 merge_shell    = 'samtools merge -u -n {output} {input}'
 to_fastq_shell = 'samtools fastq {input} -1 {output.read1} -2 {output.read2}'
 
@@ -20,23 +21,3 @@ rule sample_name:
              script = join(config['snake_src_dir'], 'sample_name_from_bam.sh')
     output:  join(work_dir, 'sample_name')
     shell:  'bash {input.script} {input.bam} > {output}'
-
-
-rule lib_size:
-    """ Take mapped (-f2) reads with quality above 20 (-q20),
-        Remove alignments with gaps,
-        Remove non-paired reads,
-        Take reads with insert size below 1000,
-        Based on first 10k of them,
-        Calculate the average insert absolute size.
-    """
-    input:   bam = config['bam'],
-             script = join(config['snake_src_dir'], 'lib_size_from_bam.sh')
-    output:  join(work_dir, 'libsize.txt')
-    shell:  'bash {input.script} {input.bam} > {output}'
-
-
-rule read_len:
-    input:   config['bam']
-    output:  join(work_dir, 'readlen.txt')
-    shell:  "samtools view {input} | head -1 | awk '{{print length($10)}}' > {output}"

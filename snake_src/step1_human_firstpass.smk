@@ -1,3 +1,8 @@
+rule step1:
+    input: read1 = join(scoring_dir, 'read1.fq'),
+           read2 = join(scoring_dir, 'read2.fq')
+
+
 rule human_firstpass_unmapped_to_fastq:
     input:   join(scoring_dir, 'both_unmapped.bam')
     output:  read1 = join(scoring_dir, 'read1.fq'),
@@ -6,7 +11,7 @@ rule human_firstpass_unmapped_to_fastq:
 
 
 rule human_firstpass_to_fastq:
-    input:   join(human_mapping, 'human.sort.bam')
+    input:   join(human_mapping, 'human.sortname.bam')
     output:  read1 = join(human_mapping, 'read1.fq'),
              read2 = join(human_mapping, 'read2.fq')
     shell:   to_fastq_shell
@@ -14,9 +19,9 @@ rule human_firstpass_to_fastq:
 
 rule human_firstpass_sortname:
     input:   join(human_mapping, 'human.bam')
-    output:  join(human_mapping, 'human.sort.bam')
+    output:  join(human_mapping, 'human.sortname.bam')
     threads: config['threads']
-    shell:  'samtools sort -n -@ {threads} {input} -Obam > {output}'
+    shell:   sortname_shell
 
 
 rule human_firstpass_merge:
@@ -24,7 +29,7 @@ rule human_firstpass_merge:
              join(human_mapping, 'mate_mapped.bam'),
              join(human_mapping, 'soft.bam')
     output:  join(human_mapping, 'human.bam')
-    shell:  'samtools merge -u -n {output} {input}'
+    shell:   merge_shell
 
 
 rule human_firstpass_soft_bam:
