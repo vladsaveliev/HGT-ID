@@ -21,3 +21,24 @@ rule sample_name:
              script = join(config['snake_src_dir'], 'sample_name_from_bam.sh')
     output:  join(work_dir, 'sample_name')
     shell:  'bash {input.script} {input.bam} > {output}'
+
+
+rule lib_size:
+    """ Take mapped (-f2) reads with quality above 20 (-q20),
+        Remove alignments with gaps,
+        Remove non-paired reads,
+        Take reads with insert size below 1000,
+        Based on first 10k of them,
+        Calculate the average insert absolute size.
+    """
+    input:   bam = config['bam'],
+             script = join(config['snake_src_dir'], 'lib_size_from_bam.sh')
+    output:  join(candidates_dir, 'libsize.txt')
+    shell:  'bash {input.script} {input.bam} > {output}'
+
+
+rule read_len:
+    input:   config['bam']
+    output:  join(candidates_dir, 'readlen.txt')
+    shell:  "samtools view {input} | head -1 | awk '{{print length($10)}}' > {output}"
+

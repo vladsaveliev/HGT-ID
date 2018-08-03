@@ -15,10 +15,11 @@ human_mapping_again = join(work_dir, 'human_mapping_again')
 viral_mapping       = join(work_dir, 'viral_mapping')
 scoring_dir         = join(work_dir, 'scoring')
 candidates_dir      = join(work_dir, 'candidates')
+find_is_dir         = join(work_dir, 'find_is')
 
 
 rule all:
-    input: join(output_dir, 'forcalling.bam')
+    input: join(find_is_dir, 'output.filt.gene.ann.txt')
 
 
 include: 'snake_src/utils.smk'
@@ -27,4 +28,5 @@ include: 'snake_src/step2_back_to_human.smk'
 include: 'snake_src/step3_to_viral.smk'
 include: 'snake_src/step4_initital_candidates.smk'
 include: 'snake_src/step5_back_to_original_bam.smk'
+include: 'snake_src/step6_find_is.smk'
 
