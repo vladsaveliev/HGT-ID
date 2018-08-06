@@ -2,11 +2,11 @@ scripts_dir:     /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/src
 snake_src_dir:   /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/snake_src
 user_human_fa:   /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/reference.fa
 human_fa:        /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/human.fa
-human_bwa:       /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/human.fa
-virus_fa:        /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/virus.fa
-virus_bwa:       /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/virus.fa
-virus_human_fa:  /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/human_virus.fa
-virus_human_bwa: /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/human_virus.fa
+human_bwa:       /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/human
+virus_fa:        /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/gdc-viral.fa
+virus_bwa:       /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/gdc-viral
+virus_human_fa:  /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/human_gdc-viral.fa
+virus_human_bwa: /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/human_gdc-viral
 ref_flat:        /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/refFlat.txt.gz
 human_cytoband:  /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/cytoBand.txt.gz
 
