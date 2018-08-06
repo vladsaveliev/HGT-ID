@@ -1,0 +1,25 @@
+name: viral
+
+channels:
+  - vladsaveliev
+  - bioconda
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python>=3.6
+  - cython
+  - bcftools
+  - bedtools
+  - samtools
+  - click
+  - cyvcf2
+  - numpy
+  - snakemake>=5.2.2vlad
+  - nose
+  - perl
+  - r
+  - perl-dbi
+  - pip:
+    - "--editable=git+https://github.com/umccr/python_utils#egg=python_utils"
+    - "--editable=git+https://github.com/vladsaveliev/NGS_Utils#egg=ngs_utils"
