@@ -6,7 +6,7 @@ use Getopt::Long;
 use strict;
 use File::Basename;
 
-my ($INPUT_BAM,$INPUT_FASTA,$OUTPUT_FILE,$minSoft,$dist_To_Soft,$bedtools,$samtools,$HUMAN_database);
+my ($INPUT_BAM, $INPUT_FASTA, $OUTPUT_FILE, $minSoft, $dist_To_Soft, $tmp_dir, $bedtools, $samtools, $HUMAN_database);
 my ($minRP,$MapQ,$minBQ);
 my ($verbose,$keep_temp);
 
@@ -20,12 +20,11 @@ GetOptions(
 	'o:s' => \$OUTPUT_FILE,
 	'm:i' => \$minRP,
 	'l:i' => \$minSoft,
-	't' => \$keep_temp,
+	't=s' => \$tmp_dir,
 	'd:i' => \$dist_To_Soft,
 	'q:i' => \$MapQ,
 	'v' => \$verbose, 
 	"help|h|?"	=> \&usage);
-
 
 if(defined($INPUT_BAM)){$INPUT_BAM=$INPUT_BAM} else {print usage();die "Where is the BAM file?\n\n"}
 if(defined($INPUT_FASTA)){$INPUT_FASTA=$INPUT_FASTA} else {print usage();die "Where is the fasta file?\n\n"}
@@ -67,7 +66,7 @@ else{$OUTNAME=$OUTPUT_FILE}
 
 print "Writing results to $OUTNAME\n";
 
-print "Usage = HGT.pl -l $minSoft -q $MapQ -d $dist_To_Soft -m $minRP -b $INPUT_BAM -f $INPUT_FASTA -o $OUTNAME \n\n";
+print "Usage = HGT.pl -l $minSoft -q $MapQ -d $dist_To_Soft -m $minRP -b $INPUT_BAM -f $INPUT_FASTA -o $OUTNAME -t $tmp_dir \n\n";
 sub usage {
 	print "\nusage: HGT.pl [-cqlrmsd] -b <BAM> -f <Genome.fa> \n";
 	print "\t-q\t\tMinimum mapping quality [20]\n";
@@ -75,7 +74,7 @@ sub usage {
 	print "\t-m\t\tMinimum number of discordant read pairs [2]\n";
 	print "\t-d\t\tMax distance between soft-clipped segments and discordant read pairs [1000]\n";
 	print "\t-o\t\tOutput file name [output.txt]\n";
-	print "\t-t\t\tPrint temp files for debugging [no|yes]\n";
+	print "\t-t\t\tDirectory for temporary files\n";
 	exit 1;
 	}
 
@@ -84,7 +83,9 @@ sub usage {
 # create temporary variable name
 #############################################################
 srand (time ^ $$ ^ unpack "%L*", `ps axww | gzip -f`);
-our $random_name=join "", map { ("a".."z")[rand 26] } 1..8;
+our $random_name=join ("",$tmp_dir, '/', "integration");
+
+print "$random_name \n";
 
 
 my $tmp_name=join ("",$random_name,".tmp.bam");
@@ -106,8 +107,8 @@ system("$command");
 print "Identifying soft-clipped regions that are at least $minSoft bp long \n";
 open (FILE,"$random_file_sc")||die "Can't open soft-clipped sam file $random_file_sc\n";
 
-my $tmpfile=join("",$random_file_sc,".sc.passfilter");
-open (OUT,">$tmpfile")||die "Can't write files here!\n";
+my $passfilter_file=join("",$random_file_sc,".sc.passfilter");
+open (OUT,">$passfilter_file")||die "Can't write files here!\n";
 
 while(<FILE>){
 	@_ = split(/\t/, $_);
@@ -126,9 +127,7 @@ while(<FILE>){
 close FILE;
 close OUT;
 
-$command=join(" ","mv",$tmpfile,$random_file_sc);
-if($verbose){	print "$command\n";}
-system("$command");
+$random_file_sc = $passfilter_file;
 
 #<STDIN>;
 #########################################################
@@ -253,9 +252,9 @@ if($verbose){$v="-v"}
 if($keep_temp){$t="-t"}
 my $tmp_out=join("",$random_name,".out");
 if ($keep_temp)	{
-$command=join("","perl ",$path,"/Bam2pair.pl -b $random_file_disc -o $tmp_out -winsize $dist_To_Soft -min $minRP -prefix $random_name -q $MapQ $v $t");
+    $command=join("","perl ",$path,"/Bam2pair.pl -b $random_file_disc -o $tmp_out -winsize $dist_To_Soft -min $minRP -prefix $random_name -q $MapQ $v yes");
 }else	{
-$command=join("","perl ",$path,"/Bam2pair.pl -b $random_file_disc -o $tmp_out -winsize $dist_To_Soft -min $minRP -prefix $random_name -q $MapQ $v");	
+    $command=join("","perl ",$path,"/Bam2pair.pl -b $random_file_disc -o $tmp_out -winsize $dist_To_Soft -min $minRP -prefix $random_name -q $MapQ $v");
 }
 if($verbose){	print "$command\n"};
 system("$command");
@@ -279,12 +278,12 @@ while(my $l =<FILE>)	{
 	my @a=split(/\t/,$l);
 	my $add=join(":",@a[0..2]);
 	open (SCRIPT,">$tmp_script")|| die "Can't open script file\n";
-	print SCRIPT "pos=`echo -e \"$a[0]\\t$a[1]\\t$a[2]\" | closestBed -a $random_file -b stdin -d -t first  | awk '\$NF< $dist_To_Soft &&  \$NF>0' | cut -f2 | sort | uniq -c | awk '{print \$2\"\\t\"\$1}' | sort -n -k2,2nr | head -1 | cut -f1`;\nreads=`echo -e \"$a[0]\\t$a[1]\\t$a[2]\" | closestBed -a $random_file -b stdin -d -t first  | awk '\$NF< $dist_To_Soft &&  \$NF>0' | wc -l`\nif [ \$pos ]; then echo -e \"$a[0]\\t\$pos\\t$l\\t\$reads\"; else pos=\$(echo \"scale=0; ($a[1]+$a[2])/2\" | bc -l); echo -e \"$a[0]\\t\$pos\\t$l\\t\$reads\";fi >>$OUTNAME";
+	print SCRIPT "pos=`echo -e \"$a[0]\\t$a[1]\\t$a[2]\" | closestBed -a $random_file -b stdin -d -t first | awk '\$NF< $dist_To_Soft &&  \$NF>0' | cut -f2 | sort | uniq -c | awk '{print \$2\"\\t\"\$1}' | sort -n -k2,2nr | head -1 | cut -f1`;\nreads=`echo -e \"$a[0]\\t$a[1]\\t$a[2]\" | closestBed -a $random_file -b stdin -d -t first  | awk '\$NF< $dist_To_Soft &&  \$NF>0' | wc -l`\nif [ \$pos ]; then echo -e \"$a[0]\\t\$pos\\t$l\\t\$reads\"; else pos=\$(echo \"scale=0; ($a[1]+$a[2])/2\" | bc -l); echo -e \"$a[0]\\t\$pos\\t$l\\t\$reads\";fi >>$OUTNAME";
 	$command=join("","chmod 777 ",$tmp_script);
 	if($verbose){	print "$command\n"};
 	system($command);
 	$command=join("","sh ",$tmp_script);
-	if($verbose){	print "$command\n"};
+	if($verbose){	print "Running sh command:\n$command\n"};
 	system($command);
 	close SCRIPT;
 	#<STDIN>;

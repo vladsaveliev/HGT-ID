@@ -36,12 +36,11 @@ $Filter_BAM=$BAM_FILE;
 
 @bam=split("/",$Filter_BAM);
 $Filter_BAM=@bam[@bam-1];
-$Filter_BAM=~s/.bam/$prefix.bam/;
+$Filter_BAM=join("",$prefix,"_",$Filter_BAM);
 $Filter_sam=$Filter_BAM;
 $Filter_sam=~s/.bam/.sam/;
-
-
-
+print "\nFilter_BAM=$Filter_BAM\n";
+print "\nFilter_sam=$Filter_sam\n";
 
 print "\nLooking for Discordant read pairs (and Unmated reads) without soft-clips\n";
 
@@ -53,7 +52,7 @@ system($command);
 $path = dirname(__FILE__);
 $Filter_cluster=$Filter_sam;
 $Filter_cluster=~s/.sam/.cluster/;
-$command=join("",$path,"/ReadCluster.pl -i=$Filter_sam -o=$Filter_cluster -m=$minSupport ");
+$command=join("","perl ",$path,"/ReadCluster.pl -i=$Filter_sam -o=$Filter_cluster -m=$minSupport ");
 if($verbose){print "\n$command\n"};	
 
 system($command);
@@ -62,7 +61,7 @@ $result_pe=join("",$Filter_cluster,".out");
 $command=join("","cat ",$Filter_cluster,".inter.sam | sort -n -k3,3n -k4,4n |perl -ane 'if(\@F[6]!~/=/){print \"HGT\\t\" . join(\"\\t\",\@F[2],\@F[3],\@F[6],\@F[7],\"\\n\")}else{print \"HGT\\t\" , join(\"\\t\",\@F[2],\@F[3],\@F[2],\@F[7],\"\\n\")}' | sort -n -k2,12n -k3,12n >",$result_pe);
 if($verbose){print $command."\n"};
 system($command);
-$command=join("","cat ",$result_pe," | ",$path,"/cluster.pair.pl ",$winsize," |awk '(\$6 >=",$minSupport,")' | awk 'BEGIN {OFS=\"\t\"} {if(\$0 !~ /^chr/){print \$3,\$4,\$1,\$2,\$6} else {print \$1,\$2,\$3,\$4,\$6}}'  | sort -n -k1,1n -k2,2n > ", $outfile);
+$command=join("","cat ",$result_pe," | perl ",$path,"/cluster.pair.pl ",$winsize," |awk '(\$6 >=",$minSupport,")' | awk 'BEGIN {OFS=\"\t\"} {if(\$0 !~ /^chr/){print \$3,\$4,\$1,\$2,\$6} else {print \$1,\$2,\$3,\$4,\$6}}'  | sort -n -k1,1n -k2,2n > ", $outfile);
 
 ##awk 'BEGIN {OFS="\t"} {if($0 !~ /^chr/){print $3,$4,$1,$2,$6} else {print $1,$2,$3,$4,$6}}'  | sort -n -k1,1n -k2,2n
 if($verbose){print $command."\n"};
