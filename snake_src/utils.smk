@@ -7,12 +7,11 @@ extract_mate_unmapped_shell = 'samtools view -u -b -f 8 -F 260 {input} > {output
 extract_mate_mapped_shell   = 'samtools view -u -b -f 4 -F 264 {input} > {output}' # only mate mapped & primary
 
 
-def get_bwa_run(input, output, threads, params):
+def get_bwa_run(input):
     sname = open(input.sname).read().strip()
-    rg = f'@RG\\tID:{sname}\\tSM:{sname}'
-    shell('bwa mem -t {threads} -M -R "{rg}" '
-          '{params.bwa_idx} {input.fq1} {input.fq2} | '
-          'samtools view -u -bS - > {output}')
+    rg = f'"@RG\\tID:{sname}\\tSM:{sname}"'
+    return ('bwa mem -t {threads} -M -R ' + rg + ' {params.bwa_idx} {input.fq1} {input.fq2} | '
+            'samtools view -u -bS - > {output}')
 
 
 rule sample_name:
@@ -33,12 +32,12 @@ rule lib_size:
     """
     input:   bam = config['bam'],
              script = join(config['snake_src_dir'], 'lib_size_from_bam.sh')
-    output:  join(candidates_dir, 'libsize.txt')
+    output:  join(work_dir, 'libsize.txt')
     shell:  'bash {input.script} {input.bam} > {output}'
 
 
 rule read_len:
     input:   config['bam']
-    output:  join(candidates_dir, 'readlen.txt')
+    output:  join(work_dir, 'readlen.txt')
     shell:  "samtools view {input} | head -1 | awk '{{print length($10)}}' > {output}"
 
