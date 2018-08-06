@@ -1,30 +1,30 @@
-rule step1:
-    input: read1 = join(scoring_dir, 'read1.fq'),
-           read2 = join(scoring_dir, 'read2.fq')
+rule _step1_human_firstpass:
+    input: read1 = join(human_mapping, 'read1.fq'),
+           read2 = join(human_mapping, 'read2.fq')
 
 
-rule human_firstpass_unmapped_to_fastq:
+rule step1_human_firstpass_unmapped_to_fastq:
     input:   join(scoring_dir, 'both_unmapped.bam')
     output:  read1 = join(scoring_dir, 'read1.fq'),
              read2 = join(scoring_dir, 'read2.fq')
     shell:   to_fastq_shell
 
 
-rule human_firstpass_to_fastq:
+rule step1_human_firstpass_to_fastq:
     input:   join(human_mapping, 'human.sortname.bam')
     output:  read1 = join(human_mapping, 'read1.fq'),
              read2 = join(human_mapping, 'read2.fq')
     shell:   to_fastq_shell
 
 
-rule human_firstpass_sortname:
+rule step1_human_firstpass_sortname:
     input:   join(human_mapping, 'human.bam')
     output:  join(human_mapping, 'human.sortname.bam')
     threads: config['threads']
     shell:   sortname_shell
 
 
-rule human_firstpass_merge:
+rule step1_human_firstpass_merge:
     input:   join(human_mapping, 'mate_unmapped.bam'),
              join(human_mapping, 'mate_mapped.bam'),
              join(human_mapping, 'soft.bam')
@@ -32,7 +32,7 @@ rule human_firstpass_merge:
     shell:   merge_shell
 
 
-rule human_firstpass_soft_bam:
+rule step1_human_firstpass_soft_bam:
     input:   bam = join(human_mapping, 'softclip.bam'),
              fai = config['human_fa'] + '.fai',
              split_reads_pl = join(config['scripts_dir'], 'splitReads.pl')
@@ -45,7 +45,7 @@ rule human_firstpass_soft_bam:
     """
 
 
-rule human_firstpass_softclip_bam:
+rule step1_human_firstpass_softclip_bam:
     input:     bam = config['bam'],
                ids = join(human_mapping, 'IDS')
     output:    join(human_mapping, 'softclip.bam')
@@ -61,14 +61,14 @@ rule human_firstpass_softclip_bam:
     """
 
 
-rule human_firstpass_all_read_ids:
+rule step1_human_firstpass_all_read_ids:
     input:  join(human_mapping, 'soft_clipped_read1.fq'),
             join(human_mapping, 'soft_clipped_read2.fq')
     output: join(human_mapping, 'IDS')
     shell: 'cat {input} | cut -f1 | sort -T $PWD | uniq > {output}'
 
 
-rule human_firstpass_softclip_reads:
+rule step1_human_firstpass_softclip_reads:
     """ Take mate mapped & mapped & paired & first in pair,
         Take with soft clipped in CIGAR,
         Skip with insertions in CIGAR,
@@ -88,19 +88,19 @@ rule human_firstpass_softclip_reads:
     """
 
 
-rule human_firstpass_mate_unmapped:
+rule step1_human_firstpass_mate_unmapped:
     input:  config['bam']
     output: join(human_mapping, 'mate_unmapped.bam')
     shell:  extract_mate_unmapped_shell
 
 
-rule human_firstpass_mate_mapped:
+rule step1_human_firstpass_mate_mapped:
     input:  config['bam']
     output: join(human_mapping, 'mate_mapped.bam')
     shell:  extract_mate_mapped_shell
 
 
-rule human_firstpass_both_unmapped:
+rule step1_human_firstpass_both_unmapped:
     # unmapped & mate unmapped
     input:  config['bam']
     output: join(scoring_dir, 'both_unmapped.bam')
