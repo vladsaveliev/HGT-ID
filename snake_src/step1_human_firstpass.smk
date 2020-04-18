@@ -76,12 +76,12 @@ rule step1_human_firstpass_softclip_reads:
         Take reads with a S series in CIGAR longer than len/2
     """
     input:  bam = config['bam'],
-            filt_pl = join(config['scripts_dir'], 'filter_soft_clipped.pl')
+            filt_pl = join(config['snake_src_dir'], 'filter_soft_clipped.pl')
     output: join(human_mapping, 'soft_clipped_read{num_in_pair}.fq')
     params: flag = lambda wc: {'1': 64, '2': 128}[wc.num_in_pair]
     shell:  """
     samtools view -F8 -f2 -F4 -f{params.flag} {input.bam} |
-    awk '$6 ~ /S/' |
+    awk '$6  ~ /S/' |
     awk '$6 !~ /I/' |
     awk '$6 !~ /D/' |
     perl -an {input.filt_pl} > {output}

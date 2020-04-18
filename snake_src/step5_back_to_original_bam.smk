@@ -1,5 +1,6 @@
 """ Creating regions to go back to original BAM file to extract reads for to find soft clipping...
 """
+import math
 
 rule _step5_back_to_original:
     input:   join(step5_dir, 'forcalling.bam')
@@ -31,7 +32,6 @@ rule step5_forcalling_merge:
             join(step5_dir, 'human.org.bam')
     output: join(step5_dir, 'merged.bam')
     shell:  merge_shell
-"merge the BAM file to find the integration point...\n";
 
 
 # 256=primary and 1024=not_duplicate
@@ -81,8 +81,8 @@ rule step5_create_regions:
             lib_size = join(work_dir,  'libsize.txt')
     output:            join(step5_dir, 'regions.bed')
     run:
-        read_len = int(open(input.read_len).read().strip())
-        lib_size = int(open(input.lib_size).read().strip())
+        read_len = int(math.floor(float(open(input.read_len).read().strip())))
+        lib_size = int(math.floor(float(open(input.lib_size).read().strip())))
         slop_len = read_len + lib_size
         shell("""
     bamToBed -i {input.bam} | 

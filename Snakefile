@@ -6,9 +6,9 @@ shell.executable('bash')
 shell.prefix('set -o pipefail && ')
 
 
-output_dir          = relpath(config.get('output', 'output'))
-output_file         = relpath(join(output_dir, 'output.txt'))
-work_dir            = relpath(join(output_dir, 'work'))
+output_dir          = config['output_dir']
+output_file         = join(output_dir, 'output.txt')
+work_dir            = join(output_dir, 'work')
 logs_dir            = join(work_dir, 'logs')
 autocode_dir        = join(work_dir, 'autocode')
 human_mapping       = join(work_dir, 'human_mapping')

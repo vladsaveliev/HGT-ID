@@ -1,14 +1,13 @@
-scripts_dir:     /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/src
-snake_src_dir:   /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/snake_src
-user_human_fa:   /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/reference.fa
-human_fa:        /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/human.fa
-human_bwa:       /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/human
-virus_fa:        /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/gdc-viral.fa
-virus_bwa:       /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/gdc-viral
-virus_human_fa:  /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/human_gdc-viral.fa
-virus_human_bwa: /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/human_gdc-viral
-ref_flat:        /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/refFlat.txt.gz
-human_cytoband:  /data/cephfs/punim0010/extras/vlad/synced/HGT-ID/resources/cytoBand.txt.gz
+scripts_dir:     /g/data3/gx8/extras/vlad/synced/HGT-ID/src
+snake_src_dir:   /g/data3/gx8/extras/vlad/synced/HGT-ID/snake_src
+human_fa:        /g/data/gx8/extras/vlad/synced/umccr/genomes/hg38/hg38.fa
+human_bwa:       /g/data/gx8/extras/vlad/synced/umccr/genomes/hg38/bwa/hg38
+virus_fa:        /g/data/gx8/extras/vlad/synced/umccr/genomes/viral/gdc-viral.fa
+virus_bwa:       /g/data/gx8/extras/vlad/synced/umccr/genomes/viral/gdc-viral.fa
+virus_human_fa:  /g/data/gx8/extras/vlad/synced/umccr/genomes/hg38/viral/hg38_noalt_plus_gdc_viral.fa
+virus_human_bwa: /g/data/gx8/extras/vlad/synced/umccr/genomes/hg38/viral/hg38_noalt_plus_gdc_viral
+ref_flat:        /g/data/gx8/extras/vlad/synced/umccr/genomes/hg38/viral/HGT_ID/hg38_refFlat.txt.gz
+human_cytoband:  /g/data/gx8/extras/vlad/synced/umccr/genomes/hg38/viral/HGT_ID/hg38_cytoBand.txt.gz
 
 threads: 4
 sequence_complexity: 0.7  # lowering this number will give more HGT events
@@ -18,5 +17,5 @@ virus_read_support: 5
 min_pr: 1
 min_soft: 5
 
-bam: /data/cephfs/punim0010/data/Results/Patients/DiploidNeverResponder/final/diploid_tumor/diploid_tumor-ready.bam
+bam: /g/data/gx8/projects/Saveliev_Viral/SBJ00322/SBJ00322_tumor.bam
 output_dir: 'output'

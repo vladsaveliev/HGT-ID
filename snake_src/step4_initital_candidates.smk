@@ -9,7 +9,7 @@ rule step4_initialcandidates_get_well_covered_regions:
     """
     input:  join(step4_dir, 'virus.human.sortpos.filt.bam')
     output: join(step4_dir, 'chromosomes_to_keep.txt')
-    params: virus_read_support = config['virus_read_support']
+    params: virus_read_support = config.get('virus_read_support', 5)
     shell:  'samtools idxstats {input} | '
             'awk -v depth={params.virus_read_support} \'$NF+$(NF-1)>virus_read_support\' | '
             'cut -f1 > {output}'
@@ -37,12 +37,12 @@ rule step4_initialcandidates_filter_with_seq_complexity:
     input:   candidates = join(step4_dir, 'HGT.candidates.txt'),
              script     = join(config['scripts_dir'], 'filter.pl')
     output:  join(step4_dir, 'HGT.candidates.filt.txt')
-    params:  sequence_complexity = config['sequence_complexity']
+    params:  sequence_complexity = config.get('sequence_complexity', 0.7)
     shell:   'cat {input.candidates} | '
              'perl {input.script} | '
              'awk \'NR>1\' | '
              'awk -v complex={params.sequence_complexity} \'$NF>=complex\' > {output}'
-integration.pl
+
 
 rule step4_initialcandidates_virushuman_sortpos:
     input:   join(step4_dir, 'virus.human.bam')

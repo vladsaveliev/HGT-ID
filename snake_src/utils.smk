@@ -37,7 +37,8 @@ rule lib_size:
 
 
 rule read_len:
-    input:   config['bam']
+    input:   bam = config['bam'],
+             script = join(config['snake_src_dir'], 'read_len_from_bam.sh')
     output:  join(work_dir, 'readlen.txt')
-    shell:  "samtools view {input} | head -1 | awk '{{print length($10)}}' > {output}"
+    shell:  'bash {input.script} {input.bam} > {output}'
 
